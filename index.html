@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد ملف ads.txt لجوجل أدسنس</title>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+        }
+        .ads-tool {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #dcf0ee;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: #333;
+        }
+        .ads-tool h2 {
+            color: #555;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .ads-tool p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .ads-tool table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .ads-tool table th,
+        .ads-tool table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .ads-tool table th {
+            background: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+        }
+        .input-field {
+            width: 90%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: #6e5aff;
+            box-shadow: 0 0 5px rgba(110, 90, 255, 0.5);
+            outline: none;
+        }
+        .tool-actions {
+            margin: 10px 0;
+        }
+        .action-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            color: #fff;
+            background: #288667;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .action-btn:hover {
+            background: #256656;
+            transform: scale(1.05);
+        }
+        .delete-btn {
+            padding: 5px 10px;
+            color: #fff;
+            background: #ff4d4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .delete-btn:hover {
+            background: #cc0000;
+        }
+        .output-box {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+            font-family: monospace;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* تحسينات للعرض على الأجهزة المحمولة */
+        @media (max-width: 600px) {
+            .ads-tool {
+                padding: 10px;
+            }
+            .ads-tool h2 {
+                font-size: 20px;
+            }
+            .ads-tool p {
+                font-size: 14px;
+            }
+            .input-field {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .tool-actions {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .action-btn, .delete-btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ads-tool">
+    <h2>مولد ملف ads.txt لجوجل أدسنس</h2>
+    <p>قم بإدخال معرف الناشر (Publisher ID) ونوع العلاقة لتوليد ملف ads.txt:</p>
+    <table id="adsTable">
+        <thead>
+            <tr>
+                <th>Publisher ID</th>
+                <th>Type</th>
+                <th>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="pub-123456789" class="input-field"></td>
+                <td>
+                    <select class="input-field">
+                        <option value="DIRECT">DIRECT</option>
+                        <option value="RESELLER">RESELLER</option>
+                    </select>
+                </td>
+                <td><button class="delete-btn" onclick="removeRow(this)">حذف</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="tool-actions">
+        <button class="action-btn" onclick="addRow()">إضافة صف جديد</button>
+        <button class="action-btn" onclick="generateAdsTxt()">توليد الملف</button>
+    </div>
+    <textarea id="adsOutput" class="output-box" readonly placeholder="سيظهر الكود هنا..."></textarea>
+    <div class="tool-actions">
+        <button class="action-btn" onclick="copyAdsTxt()">نسخ</button>
+        <button class="action-btn" onclick="downloadAdsTxt()">تنزيل</button>
+    </div>
+</div>
+
+<script>
+    function addRow() {
+        const table = document.getElementById("adsTable").getElementsByTagName("tbody")[0];
+        const newRow = table.insertRow();
+        newRow.innerHTML = `
+            <td><input type="text" placeholder="pub-123456789" class="input-field"></td>
+            <td>
+                <select class="input-field">
+                    <option value="DIRECT">DIRECT</option>
+                    <option value="RESELLER">RESELLER</option>
+                </select>
+            </td>
+            <td><button class="delete-btn" onclick="removeRow(this)">حذف</button></td>
+        `;
+    }
+
+    function removeRow(button) {
+        button.parentElement.parentElement.remove();
+    }
+
+    function generateAdsTxt() {
+        const rows = document.querySelectorAll("#adsTable tbody tr");
+        let adsTxt = "";
+        rows.forEach(row => {
+            const publisher = row.cells[0].querySelector("input").value;
+            const type = row.cells[1].querySelector("select").value;
+            if (publisher && type) {
+                adsTxt += `google.com, ${publisher}, ${type}, f08c47fec0942fa0\n`;
+            }
+        });
+        document.getElementById("adsOutput").value = adsTxt.trim();
+    }
+
+    function copyAdsTxt() {
+        const output = document.getElementById("adsOutput");
+        output.select();
+        document.execCommand("copy");
+        alert("تم النسخ بنجاح!");
+    }
+
+    function downloadAdsTxt() {
+        const adsTxt = document.getElementById("adsOutput").value;
+        const blob = new Blob([adsTxt], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "ads.txt";
+        link.click();
+    }
+</script>
+
+</body>
+</html>
